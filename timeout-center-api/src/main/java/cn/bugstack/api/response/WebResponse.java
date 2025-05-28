@@ -1,17 +1,13 @@
 package cn.bugstack.api.response;
 
-import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Data
-@Builder
 public class WebResponse <T> implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public static final String SUCCESS_CODE = "000001";

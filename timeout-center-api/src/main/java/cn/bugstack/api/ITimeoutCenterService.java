@@ -6,7 +6,6 @@ import cn.bugstack.api.response.WebResponse;
 
 public interface ITimeoutCenterService {
 
-
     /**
      * 查询超时中心任务
      */
@@ -21,6 +20,5 @@ public interface ITimeoutCenterService {
      * 取消超时中心任务
      */
     WebResponse<?> cancelTimeoutTask(String bizType, String bizId);
-
 
 }

@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+dubbo:
+  #  registry: # 单注册中心,注意属性级别:dubbo.registry,注意多注册中心格式:@Service(registry = {"registry1","registry2","registry3"})
+  #    register: false # true(默认), false:表示服务不注册到注册中心(只订阅,直连服务正常),且dubbo-admin不显示
+  #    address: zookeeper://127.0.0.1:2181
+  registry:
+    address: zookeeper://127.0.0.1:12181
+
+  application:
+    name: dubbo-service
+
+  #    qos-enable: true # 默认值 true, 是否允许在线运维, 配置和查询服务
+  #    qos-port: 22222 # 默认值2222
+  #    qos-accept-foreign-ip: false # 默认false , 不允许远程访问 telnet
+  scan:
+    base-packages: cn.bugstack.trigger.rpc

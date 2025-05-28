@@ -1,12 +1,8 @@
 package cn.bugstack.api.dto;
 
-import cn.bugstack.api.enums.TimeoutCenterStateEnum;
-
-import java.io.Serial;
 import java.io.Serializable;
 
 public class AddTimeoutTaskDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = -1;
 
     /**
@@ -18,11 +14,6 @@ public class AddTimeoutTaskDTO implements Serializable {
      * 业务唯一id,同一个BizType下不允许重复
      */
     private String bizId;
-
-    /**
-     * 任务状态 {@link  TimeoutCenterStateEnum}
-     */
-    private String state;
 
     /**
      * 期望执行时间 时间戳-秒级
