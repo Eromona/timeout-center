@@ -28,4 +28,8 @@ public class TimeoutTaskVO implements Serializable {
         return StrUtils.combine(Constant.PREPARE_QUEUE_PREFIX, bizType, "_", bizId);
     }
 
+    public static String getDeadQueueKEey(String bizType, String bizId) {
+        return StrUtils.combine(Constant.DEAD_QUEUE_PREFIX, bizType, "_", bizId);
+    }
+
 }

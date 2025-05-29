@@ -15,13 +15,13 @@ public class RedissonService implements IRedisService {
     private RedissonClient redissonClient;
 
     @Override
-    public <T> RScoredSortedSet<T> getScoredSortedSet(String key) {
+    public <T> RScoredSortedSet<T> getScoreSortedSet(String key) {
         return redissonClient.getScoredSortedSet(key);
     }
 
     @Override
-    public <T> void offerScoredSortedSet(String key, T value, double score) {
-        RScoredSortedSet<Object> scoredSortedSet = getScoredSortedSet(key);
+    public <T> void offerScoreSortedSet(String key, T value, double score) {
+        RScoredSortedSet<Object> scoredSortedSet = getScoreSortedSet(key);
         scoredSortedSet.add(score, value);
     }
 
@@ -32,8 +32,12 @@ public class RedissonService implements IRedisService {
 
     @Override
     public void deleteFromScoreSortedSet(String prepareQueueKey, Object task) {
-        getScoredSortedSet(prepareQueueKey).remove(task);
+        getScoreSortedSet(prepareQueueKey).remove(task);
     }
 
+    @Override
+    public double getScoreByObject(String prepareQueueKey, Object task) {
+        return getScoreSortedSet(prepareQueueKey).getScore(task);
+    }
 
 }

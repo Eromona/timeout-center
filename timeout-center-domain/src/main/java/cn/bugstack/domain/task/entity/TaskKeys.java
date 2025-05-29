@@ -15,4 +15,6 @@ public class TaskKeys {
 
     private String prepareQueueKey;
 
+    private String deadQueueKey;
+
 }

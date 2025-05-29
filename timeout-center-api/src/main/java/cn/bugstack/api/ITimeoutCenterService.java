@@ -2,6 +2,7 @@ package cn.bugstack.api;
 
 import cn.bugstack.api.dto.AddTimeoutTaskDTO;
 import cn.bugstack.api.dto.CommitTimeoutTaskDTO;
+import cn.bugstack.api.dto.RollbackTimeoutTaskDTO;
 import cn.bugstack.api.vo.TimeoutTaskVO;
 import cn.bugstack.api.response.WebResponse;
 
@@ -24,7 +25,9 @@ public interface ITimeoutCenterService {
     */
     void commitedTimeoutTask(CommitTimeoutTaskDTO commitTimeoutTaskDTO);
 
-
-
+    /**
+     * 回滚超时任务
+     */
+    void rollbackTimeoutTask(RollbackTimeoutTaskDTO rollbackTimeoutTaskDTO);
 
 }

@@ -9,9 +9,12 @@ public interface ITaskQueueRepository {
 
     void offerStoreQueue(TimeoutTaskEntity task);
 
-    List<TimeoutTaskEntity> prepareAll(TaskKeys keys);
+    List<Object> prepareAll(TaskKeys keys);
 
-    List<TimeoutTaskEntity> prepareLimit(TaskKeys keys, int limit);
+    List<Object> prepareLimit(TaskKeys keys, int limit);
 
     void commitedTimeoutTask(TimeoutTaskEntity timeoutTaskEntity);
+
+    void rollbackTimeoutTask(TimeoutTaskEntity timeoutTaskEntity);
+
 }

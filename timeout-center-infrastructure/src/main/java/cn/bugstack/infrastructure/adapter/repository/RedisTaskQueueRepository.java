@@ -10,7 +10,6 @@ import org.redisson.api.RScript;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,15 +22,16 @@ public class RedisTaskQueueRepository implements ITaskQueueRepository {
 
     @Override
     public void offerStoreQueue(TimeoutTaskEntity task) {
-        redisService.offerScoredSortedSet(task.getTaskKeys().getStoreQueueKey(), task.getTask(),
+
+        redisService.offerScoreSortedSet(task.getTaskKeys().getStoreQueueKey(), task.getTask(),
                 (TimeUtils.getSecondTimestamp() + task.getActionTime()) * 1000);
+
     }
 
 
     @Override
-    public List<TimeoutTaskEntity> prepareAll(TaskKeys keys) {
+    public List<Object> prepareAll(TaskKeys keys) {
         RScript script = redisService.getScript();
-        log.info("传入的时间戳字符串，{}", BigDecimal.valueOf(System.currentTimeMillis() * 1.0).toPlainString());
         return script.eval(
                 RScript.Mode.READ_WRITE,
                 "local items = redis.call('ZRANGEBYSCORE', KEYS[1], '-inf', ARGV[1]); " +
@@ -51,7 +51,7 @@ public class RedisTaskQueueRepository implements ITaskQueueRepository {
     }
 
     @Override
-    public List<TimeoutTaskEntity> prepareLimit(TaskKeys keys, int limit) {
+    public List<Object> prepareLimit(TaskKeys keys, int limit) {
         RScript script = redisService.getScript();
         return script.eval(
                 RScript.Mode.READ_WRITE,
@@ -76,7 +76,23 @@ public class RedisTaskQueueRepository implements ITaskQueueRepository {
 
     @Override
     public void commitedTimeoutTask(TimeoutTaskEntity timeoutTaskEntity) {
-        redisService.deleteFromScoreSortedSet(timeoutTaskEntity.getTaskKeys().getPrepareQueueKey(), timeoutTaskEntity.getTask());
+        redisService.deleteFromScoreSortedSet(timeoutTaskEntity.getTaskKeys().getPrepareQueueKey(),
+                timeoutTaskEntity.getTask());
     }
 
+    @Override
+    public void rollbackTimeoutTask(TimeoutTaskEntity timeoutTaskEntity) {
+        String prepareQueueKey = timeoutTaskEntity.getTaskKeys().getPrepareQueueKey();
+        String deadQueueKey = timeoutTaskEntity.getTaskKeys().getDeadQueueKey();
+        Object task = timeoutTaskEntity.getTask();
+
+        log.info("rollback timeout, timeoutTaskEntity:{}", timeoutTaskEntity);
+        long score = (long) redisService.getScoreByObject(prepareQueueKey, task);
+        redisService.deleteFromScoreSortedSet(prepareQueueKey, task);
+        if ((score % 1000) >= 15) {
+            redisService.offerScoreSortedSet(deadQueueKey, task, score);
+        } else {
+            redisService.offerScoreSortedSet(prepareQueueKey, task, score + 1);
+        }
+    }
 }

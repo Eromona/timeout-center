@@ -21,23 +21,29 @@ public class TaskQueueService implements ITaskQueueService {
     }
 
     @Override
-    public List<TimeoutTaskEntity> prepareAll(TaskKeys keys) {
+    public List<Object> prepareAll(TaskKeys keys) {
         return taskQueueRepository.prepareAll(keys);
     }
 
     @Override
-    public List<TimeoutTaskEntity> prepareLimit(TaskKeys keys, int limit) {
+    public List<Object> prepareLimit(TaskKeys keys, int limit) {
         return taskQueueRepository.prepareLimit(keys, limit);
     }
 
     @Override
     public List<String> getKeysByPattern(String keyPattern) {
+        // TODO
         return Collections.emptyList();
     }
 
     @Override
     public void commitedTimeoutTask(TimeoutTaskEntity timeoutTaskEntity) {
         taskQueueRepository.commitedTimeoutTask(timeoutTaskEntity);
+    }
+
+    @Override
+    public void rollbackTimeoutTask(TimeoutTaskEntity timeoutTaskEntity) {
+        taskQueueRepository.rollbackTimeoutTask(timeoutTaskEntity);
     }
 
 

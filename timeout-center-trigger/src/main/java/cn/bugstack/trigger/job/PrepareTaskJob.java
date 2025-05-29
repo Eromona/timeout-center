@@ -4,10 +4,8 @@ import cn.bugstack.domain.task.entity.TaskKeys;
 import cn.bugstack.domain.task.service.ITaskQueueService;
 import cn.bugstack.type.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.Set;

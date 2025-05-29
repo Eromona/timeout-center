@@ -3,6 +3,7 @@ package cn.bugstack.trigger.rpc;
 import cn.bugstack.api.ITimeoutCenterService;
 import cn.bugstack.api.dto.AddTimeoutTaskDTO;
 import cn.bugstack.api.dto.CommitTimeoutTaskDTO;
+import cn.bugstack.api.dto.RollbackTimeoutTaskDTO;
 import cn.bugstack.api.response.WebResponse;
 import cn.bugstack.api.vo.TimeoutTaskVO;
 import cn.bugstack.domain.task.adapter.repository.ITaskQueueRepository;
@@ -52,7 +53,11 @@ public class TimeoutCenterService implements ITimeoutCenterService {
                     .storeQueueKey(TimeoutTaskVO.getStoreQueueKEey(bizType, bizId))
                     .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKEey(bizType, bizId))
                     .build();
-            taskQueueService.prepareAll(taskKeys);
+
+            taskQueueService.prepareAll(taskKeys).forEach(task -> {
+                        timeoutTaskVOS.add(TimeoutTaskVO.builder().task(task).build());
+            });
+
             return WebResponse.returnSuccess(timeoutTaskVOS);
         } catch (Exception e) {
             log.error("pollTimeoutTask error bizType:{}, bizId:{}", bizType, bizId, e);
@@ -62,8 +67,9 @@ public class TimeoutCenterService implements ITimeoutCenterService {
 
     @Override
     public void commitedTimeoutTask(CommitTimeoutTaskDTO commitTimeoutTaskDTO) {
-        String bizType = commitTimeoutTaskDTO.getBizType();
+        /*String bizType = commitTimeoutTaskDTO.getBizType();
         String bizId = commitTimeoutTaskDTO.getBizId();
+
         TaskKeys taskKeys = TaskKeys.builder()
                 .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKEey(bizType, bizId))
                 .build();
@@ -71,6 +77,25 @@ public class TimeoutCenterService implements ITimeoutCenterService {
                 .taskKeys(taskKeys)
                 .task(commitTimeoutTaskDTO.getTask())
                 .build();
-        taskQueueService.commitedTimeoutTask(timeoutTaskEntity);
+
+        taskQueueService.commitedTimeoutTask(timeoutTaskEntity);*/
+        throw new RuntimeException("我是故意的");
+    }
+
+    @Override
+    public void rollbackTimeoutTask(RollbackTimeoutTaskDTO rollbackTimeoutTaskDTO) {
+        String bizType = rollbackTimeoutTaskDTO.getBizType();
+        String bizId = rollbackTimeoutTaskDTO.getBizId();
+
+        TaskKeys taskKeys = TaskKeys.builder()
+                .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKEey(bizType, bizId))
+                .deadQueueKey(TimeoutTaskVO.getDeadQueueKEey(bizType, bizId))
+                .build();
+        TimeoutTaskEntity timeoutTaskEntity = TimeoutTaskEntity.builder()
+                .taskKeys(taskKeys)
+                .task(rollbackTimeoutTaskDTO.getTask())
+                .build();
+
+        taskQueueService.rollbackTimeoutTask(timeoutTaskEntity);
     }
 }
