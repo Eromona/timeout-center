@@ -11,4 +11,12 @@
 
     <artifactId>timeout-center-api</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.bugstack</groupId>
+            <artifactId>timeout-center-type</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>

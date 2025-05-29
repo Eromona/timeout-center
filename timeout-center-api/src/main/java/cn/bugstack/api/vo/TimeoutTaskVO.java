@@ -1,44 +1,31 @@
 package cn.bugstack.api.vo;
 
+import cn.bugstack.type.constant.Constant;
+import cn.bugstack.type.utils.StrUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
+
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TimeoutTaskVO implements Serializable {
     private static final long serialVersionUID = -1;
 
-    /**
-     * 任务Id
-     */
-    private String taskId;
+    private Object task;
 
-    /**
-     * 业务类型
-     */
-    private String bizType;
+    public static String getStoreQueueKEey(String bizType, String bizId) {
+        return StrUtils.combine(Constant.STORE_QUEUE_PREFIX, bizType, "_", bizId);
+    }
 
-    /**
-     * 业务唯一id,同一个BizType下不允许重复
-     */
-    private String bizId;
+    public static String getPrepareQueueKEey(String bizType, String bizId) {
+        return StrUtils.combine(Constant.PREPARE_QUEUE_PREFIX, bizType, "_", bizId);
+    }
 
-    /**
-     * 任务数据
-     */
-    private String data;
-
-    /**
-     * 任务创建时间
-     */
-    private String createTime;
-
-    /**
-     * 任务修改时间
-     */
-    private String updateTime;
-    /**
-     * 任务版本
-     */
-    private String version;
 }

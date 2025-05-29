@@ -12,6 +12,9 @@
         <module>timeout-center-api</module>
         <module>timeout-center-trigger</module>
         <module>timeout-center-app</module>
+        <module>timeout-center-infrastructure</module>
+        <module>timeout-center-type</module>
+        <module>timeout-center-domain</module>
     </modules>
 
     <parent>
@@ -47,6 +50,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.26.0</version>
         </dependency>
 
         <dependency>

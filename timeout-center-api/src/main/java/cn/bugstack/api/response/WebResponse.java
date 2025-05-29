@@ -66,4 +66,8 @@ public class WebResponse <T> implements Serializable {
         return new WebResponse<>(code, msg, t);
     }
 
+    public static <T> WebResponse<T> returnFail() {
+        return new WebResponse<>(ERROR_CODE);
+    }
+
 }

@@ -1,24 +1,30 @@
 package cn.bugstack.api;
 
 import cn.bugstack.api.dto.AddTimeoutTaskDTO;
+import cn.bugstack.api.dto.CommitTimeoutTaskDTO;
 import cn.bugstack.api.vo.TimeoutTaskVO;
 import cn.bugstack.api.response.WebResponse;
+
+import java.util.List;
 
 public interface ITimeoutCenterService {
 
     /**
-     * 查询超时中心任务
-     */
-    WebResponse<TimeoutTaskVO> queryTimeoutTask(String bizType, String bizId);
-
-    /**
      * 添加超时中心任务
      */
-    WebResponse<?> addTimeoutTask(AddTimeoutTaskDTO addTimeoutTaskDTO);
+    void offerTimeoutTask(AddTimeoutTaskDTO addTimeoutTaskDTO);
 
     /**
-     * 取消超时中心任务
+     * 查询超时中心任务
      */
-    WebResponse<?> cancelTimeoutTask(String bizType, String bizId);
+    WebResponse<List<TimeoutTaskVO>> prepare(String bizType, String bizId);
+
+    /**
+    * 提交超时任务
+    */
+    void commitedTimeoutTask(CommitTimeoutTaskDTO commitTimeoutTaskDTO);
+
+
+
 
 }

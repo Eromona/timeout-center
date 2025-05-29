@@ -6,7 +6,10 @@
     <file url="file://$PROJECT_DIR$/timeout-center-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/timeout-center-api/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/timeout-center-app/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/timeout-center-domain/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/timeout-center-infrastructure/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/timeout-center-trigger/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/timeout-center-trigger/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/timeout-center-type/src/main/java" charset="UTF-8" />
   </component>
 </project>

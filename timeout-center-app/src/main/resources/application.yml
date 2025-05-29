@@ -9,10 +9,25 @@ dubbo:
     address: zookeeper://127.0.0.1:12181
 
   application:
-    name: dubbo-service
+    name: timeout-center-service
 
   #    qos-enable: true # 默认值 true, 是否允许在线运维, 配置和查询服务
   #    qos-port: 22222 # 默认值2222
   #    qos-accept-foreign-ip: false # 默认false , 不允许远程访问 telnet
   scan:
     base-packages: cn.bugstack.trigger.rpc
+
+# Redis
+redis:
+  sdk:
+    config:
+      host: 127.0.0.1
+      port: 16379
+      pool-size: 10
+      min-idle-size: 5
+      idle-timeout: 30000
+      connect-timeout: 5000
+      retry-attempts: 3
+      retry-interval: 1000
+      ping-interval: 60000
+      keep-alive: true

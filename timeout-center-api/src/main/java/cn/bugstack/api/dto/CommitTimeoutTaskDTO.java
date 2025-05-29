@@ -5,14 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddTimeoutTaskDTO implements Serializable {
-    private static final long serialVersionUID = -1;
+public class CommitTimeoutTaskDTO {
 
     /**
      * 业务类型
@@ -25,12 +22,7 @@ public class AddTimeoutTaskDTO implements Serializable {
     private String bizId;
 
     /**
-     * 期望执行时间 时间戳-秒级
-     */
-    private Long actionTime;
-
-    /**
-     * 任务数据(建议json格式)
+     * 任务数据
      */
     private Object task;
 }
