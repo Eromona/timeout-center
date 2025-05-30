@@ -24,10 +24,15 @@ public class RedisTaskQueueRepository implements ITaskQueueRepository {
     @Override
     public void offerStoreQueue(TimeoutTaskEntity task) {
         TaskKeys taskKeys = task.getTaskKeys();
-        String UUID = task.getUUID();
-        redisService.offerScoreSortedSet(taskKeys.getStoreQueueKey(), UUID,
-                (TimeUtils.getSecondTimestamp() + task.getActionTime()) * 1000L);
-        redisService.putToMap(taskKeys.getHashKey(), UUID, task.getTask());
+        redisService.evalCachedScript(
+                "redis.call('ZADD', KEYS[1], ARGV[1], ARGV[2]); " +
+                "redis.call('HSET', KEYS[2], ARGV[2], ARGV[3]); ",
+                RScript.ReturnType.VALUE,
+                Arrays.asList(taskKeys.getStoreQueueKey(), taskKeys.getHashKey()),
+                (TimeUtils.getSecondTimestamp() + task.getActionTime()) * 1000L,
+                task.getUUID(),
+                task.getTask()
+        );
     }
 
 
@@ -91,24 +96,35 @@ public class RedisTaskQueueRepository implements ITaskQueueRepository {
     public void commitedTimeoutTask(TimeoutTaskEntity timeoutTaskEntity) {
         TaskKeys taskKeys = timeoutTaskEntity.getTaskKeys();
         String UUID = timeoutTaskEntity.getUUID();
-        redisService.deleteFromScoreSortedSet(taskKeys.getPrepareQueueKey(),
-                UUID);
-        redisService.removeFromMap(taskKeys.getHashKey(), UUID);
+        redisService.evalCachedScript(
+                "redis.call('ZREM', KEYS[1], ARGV[1]); " +
+                "redis.call('HDEL', KEYS[2], ARGV[1]); ",
+                RScript.ReturnType.VALUE,
+                Arrays.asList(taskKeys.getPrepareQueueKey(), taskKeys.getHashKey()),
+                UUID
+        );
     }
 
     @Override
     public void rollbackTimeoutTask(TimeoutTaskEntity timeoutTaskEntity) {
-        String prepareQueueKey = timeoutTaskEntity.getTaskKeys().getPrepareQueueKey();
-        String deadQueueKey = timeoutTaskEntity.getTaskKeys().getDeadQueueKey();
-        Object task = timeoutTaskEntity.getTask();
+        TaskKeys keys = timeoutTaskEntity.getTaskKeys();
+        String prepareQueueKey = keys.getPrepareQueueKey();
+        String deadQueueKey = keys.getDeadQueueKey();
+        String UUID = timeoutTaskEntity.getUUID();
 
-        log.info("rollback timeout, timeoutTaskEntity:{}", timeoutTaskEntity);
-        long score = (long) redisService.getScoreByObject(prepareQueueKey, task);
-        redisService.deleteFromScoreSortedSet(prepareQueueKey, task);
-        if ((score % 1000) >= 15) {
-            redisService.offerScoreSortedSet(deadQueueKey, task, score);
-        } else {
-            redisService.offerScoreSortedSet(prepareQueueKey, task, score + 1);
-        }
+        redisService.evalCachedScript(
+                "local score = redis.call('ZSCORE', KEYS[1], ARGV[1]); " +
+                        "if not score then return 0 end; " +
+                        "redis.call('ZREM', KEYS[1], ARGV[1]); " +
+                        "if (tonumber(score) % 1000) >= 15 then " +
+                        "  redis.call('ZADD', KEYS[2], score, ARGV[1]); " +
+                        "else " +
+                        "  redis.call('ZADD', KEYS[1], score + 1, ARGV[1]); " +
+                        "end; " +
+                        "return 1;",
+                RScript.ReturnType.VALUE,
+                Arrays.asList(prepareQueueKey, deadQueueKey),
+                UUID
+        );
     }
 }

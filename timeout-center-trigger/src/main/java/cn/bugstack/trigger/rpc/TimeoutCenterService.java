@@ -56,7 +56,7 @@ public class TimeoutCenterService implements ITimeoutCenterService {
                     .hashKey(TimeoutTaskVO.getHashKey(bizType, bizId))
                     .build();
 
-            taskQueueService.prepareLimit(taskKeys, 200).forEach(task -> {
+            taskQueueService.prepareLimit(taskKeys, 1).forEach(task -> {
                         timeoutTaskVOS.add(TimeoutTaskVO.builder().task(task).build());
             });
 

@@ -35,7 +35,8 @@ public class AddTimeoutTaskDTO implements Serializable {
     private Long actionTime;
 
     /**
-     * 任务数据(建议json格式)
+     * 任务数据
      */
     private Object task;
+
 }

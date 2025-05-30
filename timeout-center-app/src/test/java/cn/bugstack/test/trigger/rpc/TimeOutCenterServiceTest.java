@@ -66,7 +66,7 @@ public class TimeOutCenterServiceTest {
         for (int i = 0; i < requestCount; i++) {
             Map<String, String> task = new HashMap<>();
             String base = StrUtils.combine("order_", i, "_");
-            String longText = StrUtils.repeat("X", 10);
+            String longText = StrUtils.repeat("X", 1);
 
             task.put("orderId", base + UUID.randomUUID());
             task.put("orderName", longText);         // 长文本字段
@@ -114,6 +114,7 @@ public class TimeOutCenterServiceTest {
                 .actionTime(1L)
                 .bizType(bizType)
                 .bizId(bizId)
+                .UUID(UUIDS.get(0))
                 .task(tasks.get(0))
                 .build());
 
@@ -127,6 +128,7 @@ public class TimeOutCenterServiceTest {
                 CommitTimeoutTaskDTO commitTimeoutTaskDTO = CommitTimeoutTaskDTO.builder()
                         .bizType(bizType)
                         .bizId(bizId)
+                        .UUID(UUIDS.get(0))
                         .task(tasks.get(0))
                         .build();
                 timeoutCenterService.commitedTimeoutTask(commitTimeoutTaskDTO);
@@ -156,12 +158,22 @@ public class TimeOutCenterServiceTest {
             int finalI = i;
             executor.submit(() -> {
                 try {
-                    timeoutCenterService.offerTimeoutTask(AddTimeoutTaskDTO.builder()
+                    /*timeoutCenterService.offerTimeoutTask(AddTimeoutTaskDTO.builder()
                             .actionTime(10L)
                             .bizType(bizType)
                             .bizId(bizId)
+                            .UUID(UUIDS.get(finalI))
                             .task(tasks.get(finalI))
-                            .build());
+                            .build());*/
+                    /*WebResponse<List<TimeoutTaskVO>> webResponse = timeoutCenterService.prepare(bizType, bizId);
+                    List<TimeoutTaskVO> tasks = webResponse.getData();*/
+
+                    CommitTimeoutTaskDTO commitTimeoutTaskDTO = CommitTimeoutTaskDTO.builder()
+                            .bizType(bizType)
+                            .bizId(bizId)
+                            .UUID(UUIDS.get(finalI))
+                            .build();
+                    timeoutCenterService.commitedTimeoutTask(commitTimeoutTaskDTO);
                 } finally {
                     latch.countDown();
                 }
