@@ -22,6 +22,11 @@ public class CommitTimeoutTaskDTO {
     private String bizId;
 
     /**
+    * 消息UUID
+    */
+    private String UUID;
+
+    /**
      * 任务数据
      */
     private Object task;

@@ -6,4 +6,6 @@ public class Constant {
     public final static String PREPARE_QUEUE_PREFIX = "prepare_queue_";
 
     public final static String DEAD_QUEUE_PREFIX = "dead_queue_";
+
+    public final static String HASH_PREFIX = "hash_";
 }

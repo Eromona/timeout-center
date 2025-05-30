@@ -13,6 +13,8 @@ public class TimeoutTaskEntity {
 
     private double actionTime;
 
+    private String UUID;
+
     private TaskKeys taskKeys;
 
     private Object task;

@@ -6,7 +6,6 @@ import cn.bugstack.api.dto.CommitTimeoutTaskDTO;
 import cn.bugstack.api.dto.RollbackTimeoutTaskDTO;
 import cn.bugstack.api.response.WebResponse;
 import cn.bugstack.api.vo.TimeoutTaskVO;
-import cn.bugstack.domain.task.adapter.repository.ITaskQueueRepository;
 import cn.bugstack.domain.task.entity.TaskKeys;
 import cn.bugstack.domain.task.entity.TimeoutTaskEntity;
 import cn.bugstack.domain.task.service.ITaskQueueService;
@@ -30,10 +29,12 @@ public class TimeoutCenterService implements ITimeoutCenterService {
         String bizType = addTimeoutTaskDTO.getBizType();
         String bizId = addTimeoutTaskDTO.getBizId();
         TaskKeys taskKeys = TaskKeys.builder()
-                .storeQueueKey(TimeoutTaskVO.getStoreQueueKEey(bizType, bizId))
+                .storeQueueKey(TimeoutTaskVO.getStoreQueueKey(bizType, bizId))
+                .hashKey(TimeoutTaskVO.getHashKey(bizType, bizId))
                 .build();
         TimeoutTaskEntity timeoutTaskEntity = TimeoutTaskEntity.builder()
                 .actionTime(addTimeoutTaskDTO.getActionTime())
+                .UUID(addTimeoutTaskDTO.getUUID())
                 .taskKeys(taskKeys)
                 .task(addTimeoutTaskDTO.getTask())
                 .build();
@@ -50,11 +51,12 @@ public class TimeoutCenterService implements ITimeoutCenterService {
         try {
             List<TimeoutTaskVO> timeoutTaskVOS = new ArrayList<>();
             TaskKeys taskKeys = TaskKeys.builder()
-                    .storeQueueKey(TimeoutTaskVO.getStoreQueueKEey(bizType, bizId))
-                    .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKEey(bizType, bizId))
+                    .storeQueueKey(TimeoutTaskVO.getStoreQueueKey(bizType, bizId))
+                    .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKey(bizType, bizId))
+                    .hashKey(TimeoutTaskVO.getHashKey(bizType, bizId))
                     .build();
 
-            taskQueueService.prepareAll(taskKeys).forEach(task -> {
+            taskQueueService.prepareLimit(taskKeys, 200).forEach(task -> {
                         timeoutTaskVOS.add(TimeoutTaskVO.builder().task(task).build());
             });
 
@@ -67,19 +69,19 @@ public class TimeoutCenterService implements ITimeoutCenterService {
 
     @Override
     public void commitedTimeoutTask(CommitTimeoutTaskDTO commitTimeoutTaskDTO) {
-        /*String bizType = commitTimeoutTaskDTO.getBizType();
+        String bizType = commitTimeoutTaskDTO.getBizType();
         String bizId = commitTimeoutTaskDTO.getBizId();
 
         TaskKeys taskKeys = TaskKeys.builder()
-                .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKEey(bizType, bizId))
+                .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKey(bizType, bizId))
+                .hashKey(TimeoutTaskVO.getHashKey(bizType, bizId))
                 .build();
         TimeoutTaskEntity timeoutTaskEntity = TimeoutTaskEntity.builder()
                 .taskKeys(taskKeys)
-                .task(commitTimeoutTaskDTO.getTask())
+                .UUID(commitTimeoutTaskDTO.getUUID())
                 .build();
 
-        taskQueueService.commitedTimeoutTask(timeoutTaskEntity);*/
-        throw new RuntimeException("我是故意的");
+        taskQueueService.commitedTimeoutTask(timeoutTaskEntity);
     }
 
     @Override
@@ -88,8 +90,9 @@ public class TimeoutCenterService implements ITimeoutCenterService {
         String bizId = rollbackTimeoutTaskDTO.getBizId();
 
         TaskKeys taskKeys = TaskKeys.builder()
-                .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKEey(bizType, bizId))
-                .deadQueueKey(TimeoutTaskVO.getDeadQueueKEey(bizType, bizId))
+                .prepareQueueKey(TimeoutTaskVO.getPrepareQueueKey(bizType, bizId))
+                .deadQueueKey(TimeoutTaskVO.getDeadQueueKey(bizType, bizId))
+                .hashKey(TimeoutTaskVO.getHashKey(bizType, bizId))
                 .build();
         TimeoutTaskEntity timeoutTaskEntity = TimeoutTaskEntity.builder()
                 .taskKeys(taskKeys)
